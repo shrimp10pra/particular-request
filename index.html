@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>謎解き — The Archive</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600;700&family=Noto+Serif+JP:wght@300;400;600&family=Courier+Prime:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0d0b08;
+      --paper: #1a1610;
+      --paper2: #201c15;
+      --ink: #e8dfc8;
+      --ink-dim: #8a7f6a;
+      --ink-faint: #3d3828;
+      --gold: #c9a84c;
+      --gold-dim: #7a6430;
+      --border: #3a3428;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Noto Serif JP', serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── グレイン ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      background-size: 200px;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    /* ── ヘッダー ── */
+    header {
+      text-align: center;
+      padding: 60px 20px 40px;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+    header::after {
+      content: '';
+      position: absolute;
+      bottom: -1px; left: 50%; transform: translateX(-50%);
+      width: 60px; height: 2px;
+      background: var(--gold);
+    }
+    .site-label {
+      font-family: 'Courier Prime', monospace;
+      font-size: 11px;
+      letter-spacing: 0.3em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    h1 {
+      font-family: 'Shippori Mincho', serif;
+      font-size: clamp(28px, 5vw, 52px);
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      line-height: 1.2;
+    }
+    .subtitle {
+      margin-top: 10px;
+      font-size: 13px;
+      color: var(--ink-dim);
+      letter-spacing: 0.1em;
+    }
+
+    /* ── メイン ── */
+    main {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 0 20px 80px;
+    }
+
+    /* ── 案内 ── */
+    .intro-block {
+      margin: 48px 0 40px;
+      padding: 28px 32px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--gold);
+      background: var(--paper);
+      animation: fadeIn 0.8s ease both;
+    }
+    .intro-block .label {
+      font-family: 'Courier Prime', monospace;
+      font-size: 10px;
+      letter-spacing: 0.3em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .intro-block p {
+      font-size: 14px;
+      line-height: 2;
+      color: var(--ink-dim);
+    }
+
+    /* ── 問題カード ── */
+    .puzzle-card {
+      background: var(--paper);
+      border: 1px solid var(--border);
+      border-top: none;
+    }
+    .puzzle-card:first-of-type,
+    .puzzle-card.first-card {
+      border-top: 1px solid var(--border);
+    }
+    .puzzle-card.solved { border-color: var(--gold-dim); }
+
+    .puzzle-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .puzzle-number {
+      font-family: 'Courier Prime', monospace;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      color: var(--gold);
+      white-space: nowrap;
+    }
+    .puzzle-title {
+      font-family: 'Shippori Mincho', serif;
+      font-size: 17px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+    }
+    .solved-badge {
+      margin-left: auto;
+      font-family: 'Courier Prime', monospace;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      color: var(--gold);
+      border: 1px solid var(--gold-dim);
+      padding: 3px 8px;
+      display: none;
+    }
+    .puzzle-card.solved .solved-badge { display: block; }
+
+    .puzzle-body { padding: 24px; }
+    .puzzle-text {
+      font-size: 14px;
+      line-height: 2;
+      color: var(--ink-dim);
+      margin-bottom: 20px;
+    }
+    .puzzle-text strong { color: var(--ink); font-weight: 600; }
+
+    /* ── アコーディオン ── */
+    .accordion {
+      border: 1px solid var(--border);
+      margin-bottom: 20px;
+    }
+    .accordion-toggle {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      background: var(--paper2);
+      border: none;
+      color: var(--ink-dim);
+      font-family: 'Courier Prime', monospace;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      cursor: pointer;
+      text-align: left;
+      transition: color 0.2s;
+    }
+    .accordion-toggle:hover { color: var(--gold); }
+    .accordion-icon {
+      transition: transform 0.3s ease;
+      font-size: 14px;
+      color: var(--gold);
+    }
+    .accordion.open .accordion-icon { transform: rotate(180deg); }
+    .accordion-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease;
+    }
+    .accordion.open .accordion-body { max-height: 600px; }
+    .accordion-body img {
+      width: 100%; display: block;
+      filter: sepia(20%) contrast(0.9);
+    }
+    .accordion-caption {
+      padding: 8px 16px;
+      font-size: 11px;
+      color: var(--ink-dim);
+      font-family: 'Courier Prime', monospace;
+      border-top: 1px solid var(--border);
+      background: var(--paper2);
+    }
+
+    /* ── 入力 ── */
+    .answer-area {
+      display: flex;
+      gap: 10px;
+      align-items: stretch;
+      flex-wrap: wrap;
+    }
+    .answer-input {
+      flex: 1; min-width: 200px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--ink);
+      font-family: 'Noto Serif JP', serif;
+      font-size: 14px;
+      padding: 10px 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .answer-input:focus { border-color: var(--gold); }
+    .answer-input::placeholder { color: var(--ink-faint); }
+
+    .answer-select {
+      flex: 1; min-width: 200px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--ink);
+      font-family: 'Noto Serif JP', serif;
+      font-size: 14px;
+      padding: 10px 14px;
+      outline: none;
+      cursor: pointer;
+      transition: border-color 0.2s;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23c9a84c' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 36px;
+    }
+    .answer-select:focus { border-color: var(--gold); }
+
+    .submit-btn {
+      background: transparent;
+      border: 1px solid var(--gold-dim);
+      color: var(--gold);
+      font-family: 'Courier Prime', monospace;
+      font-size: 11px;
+      letter-spacing: 0.25em;
+      padding: 10px 22px;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
+      white-space: nowrap;
+    }
+    .submit-btn:hover { background: var(--gold); color: var(--bg); border-color: var(--gold); }
+    .submit-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .feedback {
+      margin-top: 12px;
+      font-family: 'Courier Prime', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      min-height: 18px;
+      transition: color 0.3s;
+    }
+    .feedback.correct { color: #7dbf8e; }
+    .feedback.wrong   { color: #bf7d7d; }
+
+    /* ── 正解後テキスト ── */
+    .continuation {
+      padding: 24px;
+      border-top: 1px dashed var(--border);
+      background: linear-gradient(to bottom, var(--paper2), var(--paper));
+      animation: revealDown 0.6s ease both;
+    }
+    .continuation .label {
+      font-family: 'Courier Prime', monospace;
+      font-size: 10px;
+      letter-spacing: 0.3em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .continuation p { font-size: 14px; line-height: 2.2; color: var(--ink-dim); }
+    .continuation p + p { margin-top: 12px; }
+    .continuation strong { color: var(--ink); }
+
+    /* ── エピローグ二択 ── */
+    .epilogue-choice {
+      display: none;
+      border: 1px solid var(--border);
+      border-top: 1px dashed var(--gold-dim);
+      background: var(--paper2);
+      padding: 32px 24px;
+      text-align: center;
+      animation: revealDown 0.7s ease both;
+    }
+    .epilogue-choice .label {
+      font-family: 'Courier Prime', monospace;
+      font-size: 10px;
+      letter-spacing: 0.35em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+    .epilogue-choice p {
+      font-size: 14px;
+      line-height: 2.1;
+      color: var(--ink-dim);
+      margin-bottom: 28px;
+    }
+    .epilogue-choice strong { color: var(--ink); }
+    .choice-buttons {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .choice-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--ink-dim);
+      font-family: 'Noto Serif JP', serif;
+      font-size: 13px;
+      letter-spacing: 0.08em;
+      padding: 16px 32px;
+      cursor: pointer;
+      transition: all 0.25s;
+      line-height: 1.7;
+      min-width: 200px;
+    }
+    .choice-btn.light:hover {
+      border-color: #7dbf8e;
+      color: #7dbf8e;
+      background: rgba(125,191,142,0.06);
+    }
+    .choice-btn.dark:hover {
+      border-color: #bf7d7d;
+      color: #bf7d7d;
+      background: rgba(191,125,125,0.06);
+    }
+
+    /* ── エンドA（真実公開） ── */
+    .end-result {
+      display: none;
+      animation: revealDown 0.9s ease both;
+    }
+    .end-a {
+      border: 1px solid var(--gold-dim);
+      border-top: none;
+      background: var(--paper);
+      padding: 48px 32px;
+      text-align: center;
+    }
+    .end-a .end-tag {
+      font-family: 'Courier Prime', monospace;
+      font-size: 10px;
+      letter-spacing: 0.4em;
+      color: #7dbf8e;
+      margin-bottom: 20px;
+    }
+    .end-a h2 {
+      font-family: 'Shippori Mincho', serif;
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      color: var(--ink);
+      margin-bottom: 20px;
+    }
+    .end-a p { font-size: 14px; line-height: 2.2; color: var(--ink-dim); }
+    .end-a p + p { margin-top: 12px; }
+    .end-a .ornament { font-size: 22px; color: #7dbf8e; margin-top: 32px; letter-spacing: 0.3em; }
+
+    /* ── エンドB（焼却） ── */
+    .end-b {
+      border: 1px solid #5a3030;
+      border-top: none;
+      background: #110c0c;
+      padding: 48px 32px;
+      text-align: center;
+    }
+    .end-b .end-tag {
+      font-family: 'Courier Prime', monospace;
+      font-size: 10px;
+      letter-spacing: 0.4em;
+      color: #bf7d7d;
+      margin-bottom: 20px;
+    }
+    .end-b h2 {
+      font-family: 'Shippori Mincho', serif;
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      color: #d4bfb0;
+      margin-bottom: 20px;
+    }
+    .end-b p { font-size: 14px; line-height: 2.2; color: #7a6660; }
+    .end-b p + p { margin-top: 12px; }
+    .end-b .ornament { font-size: 22px; color: #bf7d7d; margin-top: 32px; letter-spacing: 0.3em; }
+
+    /* ── アニメーション ── */
+    @keyframes fadeIn {
+      from { opacity: 0; } to { opacity: 1; }
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes revealDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="site-label">Puzzle Archive — Vol.I</div>
+  <h1>廃館の記録</h1>
+  <div class="subtitle">閉ざされた扉の向こうに、真実が眠っている</div>
+</header>
+
+<main>
+
+  <!-- 案内 -->
+  <div class="intro-block">
+    <div class="label">はじめに</div>
+    <p>
+      ここはかつての研究者・<strong style="color:var(--ink)">黒瀬 恭介</strong>が遺した記録の断片である。<br>
+      各謎を解き明かしながら、失われた真実へとたどり着け。<br>
+      答えは文字で入力するか、選択肢から選ぶこと。<strong style="color:var(--ink)">大文字・小文字は問わない。</strong>
+    </p>
+  </div>
+
+  <!-- ═══════════ 問題 1 ═══════════ -->
+  <div class="puzzle-card first-card" id="puzzle-1">
+    <div class="puzzle-header">
+      <span class="puzzle-number">NO. 001</span>
+      <span class="puzzle-title">扉の暗号</span>
+      <span class="solved-badge">SOLVED</span>
+    </div>
+    <div class="puzzle-body">
+      <p class="puzzle-text">
+        廃館の玄関扉には、錆びた鍵板が残されていた。<br>
+        そこには次の言葉が刻まれていた——<br>
+        <strong>「始まりは常に、終わりの文字の中にある」</strong><br><br>
+        「おわり」という言葉の中に隠された、"始まり"を意味する言葉を答えよ。
+      </p>
+      <div class="accordion" id="acc-1">
+        <button class="accordion-toggle" onclick="toggleAccordion('acc-1')">
+          <span>▶ 手がかり画像を表示する</span>
+          <span class="accordion-icon">▼</span>
+        </button>
+        <div class="accordion-body">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 300" style="width:100%;display:block">
+            <rect width="600" height="300" fill="#100e0b"/>
+            <rect x="20" y="20" width="560" height="260" fill="none" stroke="#3a3428" stroke-width="1"/>
+            <text x="300" y="120" text-anchor="middle" font-family="serif" font-size="48" fill="#c9a84c" opacity="0.9">お　わ　り</text>
+            <text x="300" y="180" text-anchor="middle" font-family="serif" font-size="18" fill="#8a7f6a">↑　　　↑</text>
+            <text x="300" y="220" text-anchor="middle" font-family="serif" font-size="14" fill="#8a7f6a" letter-spacing="4">刻まれた文字を よく見よ</text>
+            <line x1="40" y1="40" x2="80" y2="40" stroke="#3a3428" stroke-width="1"/>
+            <line x1="40" y1="40" x2="40" y2="80" stroke="#3a3428" stroke-width="1"/>
+            <line x1="560" y1="40" x2="520" y2="40" stroke="#3a3428" stroke-width="1"/>
+            <line x1="560" y1="40" x2="560" y2="80" stroke="#3a3428" stroke-width="1"/>
+            <line x1="40" y1="260" x2="80" y2="260" stroke="#3a3428" stroke-width="1"/>
+            <line x1="40" y1="260" x2="40" y2="220" stroke="#3a3428" stroke-width="1"/>
+            <line x1="560" y1="260" x2="520" y2="260" stroke="#3a3428" stroke-width="1"/>
+            <line x1="560" y1="260" x2="560" y2="220" stroke="#3a3428" stroke-width="1"/>
+          </svg>
+          <div class="accordion-caption">FILE_001 — 玄関扉の刻印（撮影日不明）</div>
+        </div>
+      </div>
+      <div class="answer-area">
+        <input type="text" class="answer-input" id="input-1" placeholder="答えを入力してください…" autocomplete="off">
+        <button class="submit-btn" onclick="checkAnswer(1)">送信</button>
+      </div>
+      <div class="feedback" id="feedback-1"></div>
+    </div>
+    <div class="continuation" id="cont-1" style="display:none">
+      <div class="label">記録 / 001</div>
+      <p>
+        扉が軋みながら開いた。内部には薄暗い廊下が続いており、<br>
+        壁には無数の紙片が貼り付けられていた。黒瀬の字で、こう記されていた——
+      </p>
+      <p>
+        <strong>「記憶とは、消えることなく積み重なるものだ。だが、人は時に意図して忘れようとする。<br>
+        次の間には、私が最も恐れたものが置いてある」</strong>
+      </p>
+    </div>
+  </div>
+
+  <!-- ═══════════ 問題 2（最初は非表示） ═══════════ -->
+  <div class="puzzle-card" id="puzzle-2" style="display:none">
+    <div class="puzzle-header">
+      <span class="puzzle-number">NO. 002</span>
+      <span class="puzzle-title">研究室の選択</span>
+      <span class="solved-badge">SOLVED</span>
+    </div>
+    <div class="puzzle-body">
+      <p class="puzzle-text">
+        廊下の奥に、3つの扉があった。<br>
+        それぞれに記号が描かれている——<strong>「▲」「●」「■」</strong><br><br>
+        黒瀬のノートには次の記述があった：<br>
+        <em style="color:var(--ink)">"角のない、しかし始まりも終わりもない形の部屋に、答えがある"</em><br><br>
+        どの扉を開くべきか？
+      </p>
+      <div class="accordion" id="acc-2">
+        <button class="accordion-toggle" onclick="toggleAccordion('acc-2')">
+          <span>▶ ノートの挿絵を確認する</span>
+          <span class="accordion-icon">▼</span>
+        </button>
+        <div class="accordion-body">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 280" style="width:100%;display:block">
+            <rect width="600" height="280" fill="#100e0b"/>
+            <rect x="20" y="20" width="560" height="240" fill="none" stroke="#3a3428" stroke-width="1"/>
+            <polygon points="130,220 200,100 270,220" fill="none" stroke="#c9a84c" stroke-width="2" opacity="0.7"/>
+            <text x="200" y="250" text-anchor="middle" font-family="serif" font-size="14" fill="#8a7f6a">▲ 扉A</text>
+            <circle cx="300" cy="160" r="60" fill="none" stroke="#c9a84c" stroke-width="2" opacity="0.9"/>
+            <text x="300" y="250" text-anchor="middle" font-family="serif" font-size="14" fill="#c9a84c">● 扉B</text>
+            <rect x="360" y="100" width="110" height="110" fill="none" stroke="#c9a84c" stroke-width="2" opacity="0.7"/>
+            <text x="415" y="250" text-anchor="middle" font-family="serif" font-size="14" fill="#8a7f6a">■ 扉C</text>
+            <text x="300" y="60" text-anchor="middle" font-family="serif" font-size="12" fill="#8a7f6a" letter-spacing="3">三つの形、一つの答え</text>
+          </svg>
+          <div class="accordion-caption">FILE_002 — 黒瀬ノート p.47（三扉の図）</div>
+        </div>
+      </div>
+      <div class="answer-area">
+        <select class="answer-select" id="input-2">
+          <option value="">— 扉を選択してください —</option>
+          <option value="a">▲ 扉A（三角の部屋）</option>
+          <option value="b">● 扉B（円の部屋）</option>
+          <option value="c">■ 扉C（四角の部屋）</option>
+        </select>
+        <button class="submit-btn" onclick="checkAnswer(2)">送信</button>
+      </div>
+      <div class="feedback" id="feedback-2"></div>
+    </div>
+    <div class="continuation" id="cont-2" style="display:none">
+      <div class="label">記録 / 002</div>
+      <p>
+        円の扉を開くと、そこには広い実験室が広がっていた。<br>
+        棚には無数の試験管と古い写真が並んでいる。
+      </p>
+      <p>
+        写真の一枚には、若い頃の黒瀬と、見知らぬ女性が写っていた。<br>
+        裏には一言——<strong>「すべての謎は、人の名前の中に宿る」</strong>
+      </p>
+    </div>
+  </div>
+
+  <!-- ═══════════ 問題 3（最初は非表示） ═══════════ -->
+  <div class="puzzle-card" id="puzzle-3" style="display:none">
+    <div class="puzzle-header">
+      <span class="puzzle-number">NO. 003</span>
+      <span class="puzzle-title">失われた名前</span>
+      <span class="solved-badge">SOLVED</span>
+    </div>
+    <div class="puzzle-body">
+      <p class="puzzle-text">
+        実験室の中央に、一冊の日記が置かれていた。最後のページにこう書かれている——<br><br>
+        <strong>
+          「私の名は　黒瀬　恭介。<br>
+          しかしこの館に残すべき名は、もう一つある。<br>
+          私の名前のアナグラムが、すべての答えだ」
+        </strong><br><br>
+        「きょうすけ」を並び替えてできる、ある言葉を答えよ。<br>
+        <span style="font-size:12px;color:var(--ink-dim)">（ひらがな5文字、「好き」という感情に関連する）</span>
+      </p>
+      <div class="accordion" id="acc-3">
+        <button class="accordion-toggle" onclick="toggleAccordion('acc-3')">
+          <span>▶ 日記の最終ページを見る</span>
+          <span class="accordion-icon">▼</span>
+        </button>
+        <div class="accordion-body">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 320" style="width:100%;display:block">
+            <rect width="600" height="320" fill="#100e0b"/>
+            <rect x="60" y="20" width="480" height="280" fill="#1a1610" stroke="#3a3428" stroke-width="1"/>
+            <line x1="80" y1="80"  x2="520" y2="80"  stroke="#2a2520" stroke-width="1"/>
+            <line x1="80" y1="110" x2="520" y2="110" stroke="#2a2520" stroke-width="1"/>
+            <line x1="80" y1="140" x2="520" y2="140" stroke="#2a2520" stroke-width="1"/>
+            <line x1="80" y1="170" x2="520" y2="170" stroke="#2a2520" stroke-width="1"/>
+            <line x1="80" y1="200" x2="520" y2="200" stroke="#2a2520" stroke-width="1"/>
+            <line x1="80" y1="230" x2="520" y2="230" stroke="#2a2520" stroke-width="1"/>
+            <text x="300" y="55" text-anchor="middle" font-family="serif" font-size="12" fill="#8a7f6a" letter-spacing="2">19XX年　最後の記録</text>
+            <text x="90" y="100" font-family="serif" font-size="13" fill="#c9a84c">き　よ　う　す　け</text>
+            <text x="90" y="130" font-family="serif" font-size="13" fill="#8a7f6a">↓ 並び替えると……？</text>
+            <text x="90" y="160" font-family="serif" font-size="13" fill="#8a7f6a">？　？　？　？　？</text>
+            <text x="90" y="195" font-family="serif" font-size="11" fill="#8a7f6a" opacity="0.6">すべての感情の中で、最も純粋なもの。</text>
+            <text x="90" y="225" font-family="serif" font-size="11" fill="#8a7f6a" opacity="0.6">それが私の本当の名前だったのかもしれない。</text>
+            <text x="440" y="270" text-anchor="end" font-family="serif" font-size="14" fill="#c9a84c" opacity="0.8">黒瀬　恭介</text>
+          </svg>
+          <div class="accordion-caption">FILE_003 — 日記 最終頁（日付不明）</div>
+        </div>
+      </div>
+      <div class="answer-area">
+        <input type="text" class="answer-input" id="input-3" placeholder="ひらがな5文字で入力…" autocomplete="off">
+        <button class="submit-btn" onclick="checkAnswer(3)">送信</button>
+      </div>
+      <div class="feedback" id="feedback-3"></div>
+    </div>
+
+    <!-- エピローグ本文 -->
+    <div class="continuation" id="cont-3" style="display:none">
+      <div class="label">エピローグ</div>
+      <p>
+        日記を閉じると、部屋全体が静寂に包まれた。<br>
+        黒瀬 恭介が最後に遺したものは、研究でも記録でもなく——<br>
+        ただ、<strong>純粋な想いの欠片</strong>だったのかもしれない。
+      </p>
+      <p>
+        だが、あなたの手にはいま、この館の<strong>すべての記録</strong>がある。<br>
+        それをどうするかは……あなた次第だ。
+      </p>
+    </div>
+
+    <!-- ═══ エピローグ二択 ═══ -->
+    <div class="epilogue-choice" id="epilogue-choice">
+      <div class="label">最後の選択</div>
+      <p>
+        黒瀬が遺した記録をどうするか。<br>
+        その決断が、物語の幕をおろす。
+      </p>
+      <div class="choice-buttons">
+        <button class="choice-btn light" onclick="showEnd('a')">
+          📖 記録を世界に公開する<br>
+          <span style="font-size:11px;color:inherit;opacity:0.7">——真実を、光の中へ</span>
+        </button>
+        <button class="choice-btn dark" onclick="showEnd('b')">
+          🔥 記録をすべて焼き払う<br>
+          <span style="font-size:11px;color:inherit;opacity:0.7">——忘却の炎に委ねる</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ エンドA ═══ -->
+  <div class="end-result" id="end-a">
+    <div class="end-a">
+      <div class="end-tag">END — A ／ 解放</div>
+      <h2>真実の夜明け</h2>
+      <p>
+        あなたは記録を公開することを選んだ。
+      </p>
+      <p>
+        黒瀬 恭介の研究と、彼が抱えた想いは——<br>
+        やがて多くの人の目に触れ、静かに語り継がれていく。
+      </p>
+      <p>
+        廃館には、もう誰もいない。<br>
+        しかしその記憶は、永遠に消えることなく残るだろう。
+      </p>
+      <div class="ornament">◇ ◆ ◇</div>
+    </div>
+  </div>
+
+  <!-- ═══ エンドB ═══ -->
+  <div class="end-result" id="end-b">
+    <div class="end-b">
+      <div class="end-tag">END — B ／ 忘却</div>
+      <h2>灰になるまで</h2>
+      <p>
+        あなたは記録を炎に投じることを選んだ。
+      </p>
+      <p>
+        紙が燃え、煙が天井へと立ち上る。<br>
+        黒瀬の筆跡は、文字の一つひとつが灰になるまで——静かに消えていった。
+      </p>
+      <p>
+        廃館は、ふたたび沈黙する。<br>
+        誰も知らない。誰も語らない。それもまた、一つの選択だ。
+      </p>
+      <div class="ornament">— ■ —</div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  // ─────────────────────
+  // 問題の定義
+  // ─────────────────────
+  const puzzles = {
+    1: { type: 'text',   answers: ['わり', '割り', 'ワリ'] },
+    2: { type: 'select', answers: ['b'] },
+    3: { type: 'text',   answers: ['すきよけ', 'すきけよ', 'よすきけ', 'すけよき', 'よきすけ', 'きよすけ'] }
+  };
+  const TOTAL = Object.keys(puzzles).length;
+
+  // ─────────────────────
+  // アコーディオン
+  // ─────────────────────
+  function toggleAccordion(id) {
+    const el = document.getElementById(id);
+    el.classList.toggle('open');
+    const span = el.querySelector('.accordion-toggle span:first-child');
+    const labels = {
+      'acc-1': '手がかり画像を表示する',
+      'acc-2': 'ノートの挿絵を確認する',
+      'acc-3': '日記の最終ページを見る',
+    };
+    if (el.classList.contains('open')) {
+      span.textContent = '▼ 閉じる';
+    } else {
+      span.textContent = '▶ ' + (labels[id] || '表示する');
+    }
+  }
+
+  // ─────────────────────
+  // 回答チェック
+  // ─────────────────────
+  function checkAnswer(num) {
+    const puzzle  = puzzles[num];
+    const input   = document.getElementById('input-' + num);
+    const feedback = document.getElementById('feedback-' + num);
+    const card    = document.getElementById('puzzle-' + num);
+
+    const val = puzzle.type === 'text'
+      ? input.value.trim().toLowerCase().replace(/\s/g, '')
+      : input.value;
+
+    if (!val) {
+      feedback.textContent = '— 答えを入力または選択してください';
+      feedback.className = 'feedback wrong';
+      return;
+    }
+
+    const correct = puzzle.answers.some(a => a.toLowerCase() === val);
+
+    if (correct) {
+      feedback.textContent = '✓  正解です';
+      feedback.className = 'feedback correct';
+      card.classList.add('solved');
+      input.disabled = true;
+      card.querySelector('.submit-btn').disabled = true;
+
+      setTimeout(() => {
+        // 正解後テキストを表示
+        const cont = document.getElementById('cont-' + num);
+        if (cont) {
+          cont.style.display = 'block';
+          cont.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+        // 次ステップへ
+        setTimeout(() => unlockNext(num), 600);
+      }, 400);
+
+    } else {
+      feedback.textContent = '✗  違います。もう一度考えてみてください';
+      feedback.className = 'feedback wrong';
+      input.style.borderColor = '#8b2c2c';
+      setTimeout(() => { input.style.borderColor = ''; }, 800);
+    }
+  }
+
+  // ─────────────────────
+  // 次問題のアンロック
+  // ─────────────────────
+  function unlockNext(solvedNum) {
+    if (solvedNum < TOTAL) {
+      // 次の問題カードを表示
+      const nextCard = document.getElementById('puzzle-' + (solvedNum + 1));
+      if (nextCard) {
+        nextCard.style.display = 'block';
+        nextCard.style.animation = 'slideUp 0.55s ease both';
+        setTimeout(() => {
+          nextCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
+      }
+    } else {
+      // 最終問題クリア → エピローグ二択を表示
+      setTimeout(() => {
+        const choice = document.getElementById('epilogue-choice');
+        choice.style.display = 'block';
+        choice.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 400);
+    }
+  }
+
+  // ─────────────────────
+  // エンド分岐
+  // ─────────────────────
+  function showEnd(type) {
+    // 二択ボタンを無効化
+    const choice = document.getElementById('epilogue-choice');
+    choice.querySelectorAll('.choice-btn').forEach(btn => {
+      btn.disabled = true;
+      btn.style.opacity = '0.4';
+      btn.style.cursor = 'not-allowed';
+    });
+
+    // 選ばれたエンドを表示
+    const endEl = document.getElementById('end-' + type);
+    endEl.style.display = 'block';
+    setTimeout(() => {
+      endEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+  }
+
+  // ─────────────────────
+  // Enterキー対応
+  // ─────────────────────
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Enter') return;
+    const focused = document.activeElement;
+    if (focused && focused.classList.contains('answer-input')) {
+      checkAnswer(parseInt(focused.id.replace('input-', '')));
+    }
+  });
+</script>
+</body>
+</html>
