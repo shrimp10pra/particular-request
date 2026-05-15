@@ -1,0 +1,47 @@
+<div class="mail-card unread" id="puzzle-final">
+
+  <!-- ヘッダ -->
+  <div class="mail-header">
+    <div class="sender-area">
+      <div class="sender-icon">?</div>
+      <div class="sender-meta">
+        <div class="sender-name">UNKNOWN SENDER</div>
+        <div class="mail-address">contact@████.jp</div>
+      </div>
+    </div>
+    <div class="mail-date" id="final-date"></div>
+  </div>
+
+  <!-- 件名 -->
+  <div class="mail-subject">Re:Re:突然のご連絡失礼します。</div>
+
+  <!-- 本文 -->
+  <div class="mail-body">
+    <p>
+      刑事「本当にヤバい人だったのかな……」
+    </p>
+
+    <div class="answer-area">
+      <div class="reply-label">YOUR DECISION</div>
+      <select class="answer-select" id="final-select">
+        <option value="">— 返信内容を選択してください —</option>
+        <option value="a">危険な人なんだと思います。早く捕まえましょう。</option>
+        <option value="b">悪いことはしてますが、何か意図があったのかもしれません。</option>
+      </select>
+      <button onclick="submitFinalDecision()">送信する</button>
+      <div id="msg-final" class="mail-message"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // 現在時刻を表示
+  const d = new Date();
+  document.getElementById('final-date').textContent =
+    d.getFullYear() + '/' +
+    String(d.getMonth()+1).padStart(2,'0') + '/' +
+    String(d.getDate()).padStart(2,'0') + ' ' +
+    String(d.getHours()).padStart(2,'0') + ':' +
+    String(d.getMinutes()).padStart(2,'0');
+</script>

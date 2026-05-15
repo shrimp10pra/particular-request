@@ -1,0 +1,72 @@
+<!-- =========================================
+  メール風 puzzle2.html
+========================================= -->
+
+<div id="puzzle-section-2">
+
+  <article class="mail-card unread" id="puzzle-2">
+
+    <!-- ヘッダ -->
+  <div class="mail-header">
+    <div class="sender-area">
+      <div class="sender-icon">
+        ?
+      </div>
+      <div class="sender-meta">
+        <div class="sender-name">
+          UNKNOWN SENDER
+        </div>
+        <div class="mail-address">
+          contact@████.jp
+        </div>
+      </div>
+    </div>
+    <div class="mail-date">
+      2002/04/08 03:47
+    </div>
+  </div>
+
+    <!-- 件名 -->
+    <div class="mail-subject">
+      Re:Re:突然のご連絡失礼します。
+    </div>
+
+    <!-- 本文 -->
+    <div class="mail-body">
+      <p>
+        ご連絡ありがとうございます。<br>
+        ほにゃほにゃ<br>
+        正しいと思う選択肢を選んでください<br>
+      </p>
+
+      <div class="accordion" id="acc-2">
+        <button class="accordion-toggle" onclick="toggleAccordion('acc-2')">
+          <span>イラストを確認する</span>
+          <span class="accordion-icon">▼</span>
+        </button>
+        <div class="accordion-body">
+          <img src="images/puzzle2_illustration.png"/>
+          <p style="margin-top:10px; font-size:13px; color:#5f6368; line-height:1.8;">
+            このイラストは何でしょう？
+          </p>
+          <div class="accordion-caption">添付画像</div>
+        </div>
+      </div>
+
+      <!-- 返信エリア -->
+      <div class="reply-area">
+        <div class="reply-label">SELECT REPLY</div>
+        <select class="reply-select" id="input-2">
+          <option value="">— 返信内容を選択してください —</option>
+          <option value="a">キツネ</option>
+          <option value="b">ネズミ</option>
+          <option value="c">ネコ</option>
+        </select>
+        <button onclick="checkAnswer(2)">返信を送信</button>
+        <div id="msg-2" class="mail-message"></div>
+      </div>
+    </div>
+
+  </article>
+
+</div>

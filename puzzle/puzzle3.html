@@ -1,0 +1,111 @@
+<!-- =========================================
+  メール風 puzzle3.html
+========================================= -->
+
+<div id="puzzle-section-3">
+
+  <article class="mail-card unread" id="puzzle-3">
+
+    <!-- ヘッダ -->
+  <div class="mail-header">
+    <div class="sender-area">
+      <div class="sender-icon">
+        ?
+      </div>
+      <div class="sender-meta">
+        <div class="sender-name">
+          UNKNOWN SENDER
+        </div>
+        <div class="mail-address">
+          contact@████.jp
+        </div>
+      </div>
+    </div>
+    <div class="mail-date">
+      2002/04/08 03:47
+    </div>
+  </div>
+
+    <!-- 件名 -->
+    <div class="mail-subject">
+      Re:Re:突然のご連絡失礼します。
+    </div>
+
+    <!-- 本文 -->
+    <div class="mail-body">
+      <p>
+        黒瀬のノートの最終ページには、一文だけが残されていた。<br><br>
+        <em style="color:#6b7280">"この事件の核心は、血縁の裏切りにある"</em><br><br>
+        記録を読み解き、事件の真相を一文で答えよ。
+      </p>
+
+      <div class="accordion" id="acc-3-1">
+        <button class="accordion-toggle" onclick="toggleAccordion('acc-3-1')">
+          <span>答えを確認する</span>
+          <span class="accordion-icon">▼</span>
+        </button>
+        <div class="accordion-body">
+          <img src="images/puzzle3_answer.png"/>
+          <p style="margin-top:10px; font-size:13px; color:#5f6368; line-height:1.8;">
+            16:9の画像テスト
+          </p>
+          <div class="accordion-caption">添付画像</div>
+        </div>
+      </div>
+
+      <div class="accordion" id="acc-3-2">
+        <button class="accordion-toggle" onclick="toggleAccordion('acc-3-2')">
+          <span>イラストを確認する</span>
+          <span class="accordion-icon">▼</span>
+        </button>
+        <div class="accordion-body">
+          <img src="images/puzzle3_illustration.png"/>
+          <p style="margin-top:10px; font-size:13px; color:#5f6368; line-height:1.8;">
+            複数枚画像テスト
+          </p>
+          <div class="accordion-caption">添付画像</div>
+        </div>
+      </div>
+
+      <!-- 入力エリア -->
+      <div class="reply-area">
+        <div class="reply-label">SELECT REPLY</div>
+
+        <div class="combo-sentence">
+          <select class="reply-select" id="input-3a">
+            <option value="">— 選択 —</option>
+            <option value="両親">両親</option>
+            <option value="息子">息子</option>
+            <option value="刑事">刑事</option>
+            <option value="高橋組">高橋組</option>
+          </select>
+
+          <span class="combo-label">が</span>
+
+          <select class="reply-select" id="input-3b">
+            <option value="">— 選択 —</option>
+            <option value="両親">両親</option>
+            <option value="息子">息子</option>
+            <option value="刑事">刑事</option>
+            <option value="高橋組">高橋組</option>
+          </select>
+
+          <span class="combo-label">を</span>
+
+          <select class="reply-select" id="input-3c">
+            <option value="">— 選択 —</option>
+            <option value="殺した">殺した</option>
+            <option value="騙した">騙した</option>
+            <option value="見捨てた">見捨てた</option>
+            <option value="許した">許した</option>
+          </select>
+        </div>
+
+        <button onclick="checkAnswer(3)">返信を送信</button>
+        <div id="msg-3" class="mail-message"></div>
+      </div>
+    </div>
+
+  </article>
+
+</div>
