@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>inbox — SECURE ARCHIVE</title>
+  <title>突然のご連絡失礼します。 — SecureMail</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
+<body data-page="1" data-next="puzzle/puzzle2.html">
 
   <header class="topbar">
     <div class="topbar-inner">
@@ -93,7 +93,57 @@
       <div class="inbox-toolbar">
         <span class="inbox-title">受信トレイ</span>
       </div>
-      <div id="puzzle-container"></div>
+      <div id="puzzle-container">
+
+        <article class="mail-card unread" id="puzzle-1">
+
+          <div class="mail-header">
+            <div class="sender-area">
+              <div class="sender-icon">?</div>
+              <div class="sender-meta">
+                <div class="sender-name">UNKNOWN SENDER</div>
+                <div class="mail-address">contact@████.jp</div>
+              </div>
+            </div>
+            <div class="mail-date">2002/04/08 02:13</div>
+          </div>
+
+          <div class="mail-subject">突然のご連絡失礼します。</div>
+
+          <div class="mail-body">
+            <p>
+              初めまして。<br>
+              <br>
+              本当は依頼者として素性を明かすべきなのでしょうが、<br>
+              いつどこで誰にこの連絡が見つかるかわかりませんので、名前は伏せさせていただきます。<br>
+              <br>
+              貴方に頼みたいことがあり、ご連絡させていただきました。<br>
+              <br>
+              突然ですが、「S家暴行連続詐欺事件」についてご存知でしょうか？<br>
+              <br>
+              ある夫婦が暴力団から暴行を受け、
+              存在ごと闇に葬られる一歩手前で、
+              匿名の通報により保護されたという事件です。<br>
+              <br>
+              こちらの事件はいわゆるマニアの間では有名な事件のようで、<a href="https://shrimp10pra.github.io/Mikipedia/#main">Mikipedia</a>も作成されています。<br>
+              <br>
+              ただ、この事件、少し不可解な点がありまして……。<br>
+              お互いに持っている情報のすり合わせもかねて、<br>
+              <strong>夫婦が保護された日付</strong>を送っていただいてもよろしいでしょうか？<br><br>
+              ※20020401で通ります
+            </p>
+
+            <div class="reply-area">
+              <div class="reply-label">REPLY</div>
+              <input type="text" id="input-1" placeholder="返信内容を入力...">
+              <button onclick="checkAnswer(1)">返信を送信</button>
+              <div id="msg-1" class="mail-message"></div>
+            </div>
+          </div>
+
+        </article>
+
+      </div>
     </main>
 
   </div>

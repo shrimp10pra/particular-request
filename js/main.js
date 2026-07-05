@@ -23,61 +23,35 @@ const puzzles = {
 
 };
 
-const TOTAL = 3;
-
-let currentLoaded = 0;
-
 // =========================================
-// 初期ロード
+// 初期化
 // =========================================
 
-window.addEventListener(
-  'DOMContentLoaded',
-  () => {
-    loadNextPuzzle();
-  }
-);
+window.addEventListener('DOMContentLoaded', () => {
+  initFinalDate();
+  updateUnreadCount();
+});
+
+function initFinalDate() {
+  const dateEl = document.getElementById('final-date');
+  if (!dateEl) return;
+
+  const d = new Date();
+  dateEl.textContent =
+    d.getFullYear() + '/' +
+    String(d.getMonth() + 1).padStart(2, '0') + '/' +
+    String(d.getDate()).padStart(2, '0') + ' ' +
+    String(d.getHours()).padStart(2, '0') + ':' +
+    String(d.getMinutes()).padStart(2, '0');
+}
 
 // =========================================
-// 次のメールを読み込む
+// 別タブで開く
 // =========================================
 
-async function loadNextPuzzle() {
-
-  const nextNum = currentLoaded + 1;
-
-  if (nextNum > TOTAL) {
-    return;
-  }
-
-  const container = document.getElementById('puzzle-container');
-
-  try {
-
-    const response = await fetch(`puzzle/puzzle${nextNum}.html`);
-    const html = await response.text();
-
-    const wrapper = document.createElement('div');
-    wrapper.innerHTML = html;
-    container.appendChild(wrapper);
-
-    currentLoaded = nextNum;
-
-    // 少し遅らせてスクロール
-    setTimeout(() => {
-      wrapper.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start'
-      });
-    }, 120);
-
-    // 新着演出
-    playMailEffect();
-
-  } catch (e) {
-    console.error(e);
-  }
-
+function openInNewTab(url) {
+  window.open(url, '_blank', 'noopener');
+  playMailEffect();
 }
 
 // =========================================
@@ -93,17 +67,12 @@ function checkAnswer(num) {
   let isCorrect = false;
   let allInputs = [];
 
-  // =========================
-  // combo型（puzzle3など）
-  // =========================
-
   if (puzzle.combo) {
 
     const aEl = document.getElementById('input-' + num + 'a');
     const bEl = document.getElementById('input-' + num + 'b');
     const cEl = document.getElementById('input-' + num + 'c');
 
-    // 未選択チェック
     if (!aEl.value || !bEl.value || !cEl.value) {
       msgEl.textContent = 'すべての項目を選択してください。';
       msgEl.style.color = '#d46b6b';
@@ -117,10 +86,6 @@ function checkAnswer(num) {
 
     allInputs = [aEl, bEl, cEl];
 
-  // =========================
-  // 通常型（input / select）
-  // =========================
-
   } else {
 
     const inputEl = document.getElementById('input-' + num);
@@ -132,10 +97,6 @@ function checkAnswer(num) {
 
   const buttonEl = cardEl.querySelector('.reply-area button');
 
-  // =========================
-  // 正解
-  // =========================
-
   if (isCorrect) {
 
     cardEl.classList.remove('unread');
@@ -145,21 +106,14 @@ function checkAnswer(num) {
     msgEl.textContent = '新しいメールを受信しました。';
     msgEl.style.color = '#1e8c4a';
 
-    // 無効化
     allInputs.forEach(el => el.disabled = true);
     updateUnreadCount();
     buttonEl.disabled = true;
 
-    // 次へ
-    if (num < TOTAL) {
-      setTimeout(() => { loadNextPuzzle(); }, 900);
-    } else {
-      setTimeout(() => { showFinalChoice(); }, 900);
+    const nextUrl = document.body.dataset.next;
+    if (nextUrl) {
+      openInNewTab(nextUrl);
     }
-
-  // =========================
-  // 不正解
-  // =========================
 
   } else {
 
@@ -170,33 +124,6 @@ function checkAnswer(num) {
 
     shakeElement(cardEl);
 
-  }
-
-}
-
-// =========================================
-// FINAL CHOICE
-// =========================================
-
-async function showFinalChoice() {
-
-  const container = document.getElementById('puzzle-container');
-
-  try {
-
-    const response = await fetch('end/choice.html');
-    const html = await response.text();
-
-    const wrapper = document.createElement('div');
-    wrapper.innerHTML = html;
-    container.appendChild(wrapper);
-
-    wrapper.scrollIntoView({ behavior: 'smooth' });
-
-    playMailEffect();
-
-  } catch (e) {
-    console.error(e);
   }
 
 }
@@ -216,37 +143,15 @@ function submitFinalDecision() {
     return;
   }
 
-  // 連打防止
   selectEl.disabled = true;
   btnEl.disabled    = true;
 
-  showEnd(decision);
+  const url = decision === 'a'
+    ? document.body.dataset.nextA
+    : document.body.dataset.nextB;
 
-}
-
-// =========================================
-// エンド表示
-// =========================================
-
-async function showEnd(type) {
-
-  const container = document.getElementById('puzzle-container');
-
-  try {
-
-    const response = await fetch(`end/end${type}.html`);
-    const html = await response.text();
-
-    const wrapper = document.createElement('div');
-    wrapper.className = 'end-result';
-    wrapper.innerHTML = html;
-
-    container.appendChild(wrapper);
-
-    wrapper.scrollIntoView({ behavior: 'smooth' });
-
-  } catch (e) {
-    console.error(e);
+  if (url) {
+    openInNewTab(url);
   }
 
 }
