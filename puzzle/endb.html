@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>メールを受信しました</title>
+  <title>メールを受信しました(6)</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="../css/style.css">
 </head>
-<body data-page="1" data-next="puzzle/puzzle2.html">
+<body data-page="endb">
 
   <header class="topbar">
     <div class="topbar-inner">
@@ -49,7 +49,6 @@
             <path d="M20 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V6a2 2 0 00-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" fill="currentColor"/>
           </svg>
           <span>受信トレイ</span>
-          <span class="nav-badge" id="unread-count"></span>
         </div>
         <div class="nav-item muted">
           <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
@@ -75,14 +74,6 @@
       <div class="nav-section-label">ラベル</div>
       <nav class="sidebar-nav">
         <div class="nav-item muted">
-          <span class="nav-dot" style="background:#1a73e8"></span>
-          <span>CASE FILE</span>
-        </div>
-        <div class="nav-item muted">
-          <span class="nav-dot" style="background:#c5221f"></span>
-          <span>CLASSIFIED</span>
-        </div>
-        <div class="nav-item muted">
           <span class="nav-dot" style="background:#188038"></span>
           <span>RESOLVED</span>
         </div>
@@ -95,45 +86,41 @@
       </div>
       <div id="puzzle-container">
 
-        <article class="mail-card unread" id="puzzle-1">
+        <article class="mail-card solved end-result">
 
           <div class="mail-header">
             <div class="sender-area">
               <div class="sender-icon">?</div>
               <div class="sender-meta">
-                <div class="sender-name">UNKNOWN SENDER</div>
-                <div class="mail-address">contact@████.jp</div>
+                <div class="sender-name">潤田</div>
+                <div class="mail-address">uruta.k@████.jp</div>
               </div>
             </div>
-            <div class="mail-date">2002/04/08 02:13</div>
+            <div class="mail-date">CASE CLOSED</div>
           </div>
 
-          <div class="mail-subject">突然のご連絡失礼します。</div>
+          <div class="mail-subject">Re:Re:Re:Re:Re:Re:Re:Re:Re:Re:突然のご連絡失礼します。</div>
 
           <div class="mail-body">
-            <p>
-              初めまして。<br>
-              <br>
-              本当は依頼者として素性を明かすべきなのでしょうが、<br>
-              いつどこで誰にこの連絡が見つかるかわかりませんので、名前は伏せさせていただきます。<br>
-              <br>
-              突然ですが、ある忍者の一派にまつわる都市伝説をご存知でしょうか。<br>
-              噂によれば、その末裔は現代でも密かに活動を続けており、<br>
-              様々な企業や事件に関与していると言われています。<br>
-              <br>
-              調べたところ、その一族の噂をまとめた<a href="https://shrimp10pra.github.io/Mikipedia/#main"  target="_blank" rel="noopener noreferrer">サイト</a>もあるようですが、<br>
-              内容の真偽については不明瞭な点が多いのが実情です。<br>
-              <br>
-              ですが、この文章を読んでいる貴方であれば、きっとこうした話に興味を持っていただけるのではないでしょうか。<br>
-              もし興味がおありでしたら、その一族に関する<strong>最新の事件名</strong>をお送りいただけないでしょうか。<br>
-            </p>
+            <p>ありがとうございます。<br><br>
 
-            <div class="reply-area">
-              <div class="reply-label">Q.事件名は？</div>
-              <input type="text" id="input-1" placeholder="返信内容を入力...">
-              <button onclick="checkAnswer(1)">返信を送信</button>
-              <div id="msg-1" class="mail-message"></div>
-            </div>
+              貴方から「両親を通報したのは悪意だけではない」と連絡をいただいてから自分でも少し考えていました。<br><br>
+
+              彼は両親を守ろうとしたのではないか、と。<br>
+              調査メモを見返すと潤田組は両親にけじめをつけさせようとしていました。<br>
+              両親にこんなことを辞めてほしいし、潤田組にお金を返してほしかったけど、今までの犯罪遍歴を踏まえると辞めるわけもない。<br>
+              だから、通報をすることで両親を守りつつ、強制的に詐欺師から足を洗わせたのかもしれませんね。<br>
+              きっと彼は親を愛していたのでしょう。親の心子知らずであり、子の心は親も知りません。<br>
+              怒りの矛先が自分に向かうことも、織り込み済みだったのでしょうか。<br><br>
+
+              貴方のおかげで少し心が晴れました。<br>
+              この事件を追うのをやめ、彼が幸せに生きていることを祈りたいと思います。<br>
+              ここまで私の話を聞いてくださり、本当にありがとうございました。<br><br>
+
+              私からの連絡はこれで最後にいたしますが、もしどこかで直接お会いできたらお礼を言わせてください。<br><br>
+
+              それでは、お元気で。<br>
+</p>
           </div>
 
         </article>
@@ -143,6 +130,5 @@
 
   </div>
 
-  <script src="js/main.js"></script>
 </body>
 </html>
