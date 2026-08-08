@@ -5,16 +5,17 @@
 const puzzles = {
 
   1: {
-    answers: ['20020401']
+    answers: ['新浜地区架空ビル売却事件']
   },
 
   2: {
-    answers: ['b']
+    combo: true,
+    answer: { a: '潤田組', b: '金銭', c: '盗まれた' }
   },
 
   3: {
     combo: true,
-    answer: { a: '息子', b: '両親', c: '騙した' }
+    answer: { a: '息子', b: '夫婦', c: '騙した' }
   },
 
   final: {

@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Re:Re:Re:Re:突然のご連絡失礼します。 — SecureMail</title>
+  <title>メールを受信しました(4)</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/style.css">
 </head>
-<body data-page="enda">
+<body data-page="4" data-next-a="puzzle4_yes.html" data-next-b="puzzle4_no.html">
 
   <header class="topbar">
     <div class="topbar-inner">
@@ -49,6 +49,7 @@
             <path d="M20 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V6a2 2 0 00-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" fill="currentColor"/>
           </svg>
           <span>受信トレイ</span>
+          <span class="nav-badge" id="unread-count"></span>
         </div>
         <div class="nav-item muted">
           <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
@@ -74,6 +75,14 @@
       <div class="nav-section-label">ラベル</div>
       <nav class="sidebar-nav">
         <div class="nav-item muted">
+          <span class="nav-dot" style="background:#1a73e8"></span>
+          <span>CASE FILE</span>
+        </div>
+        <div class="nav-item muted">
+          <span class="nav-dot" style="background:#c5221f"></span>
+          <span>CLASSIFIED</span>
+        </div>
+        <div class="nav-item muted">
           <span class="nav-dot" style="background:#188038"></span>
           <span>RESOLVED</span>
         </div>
@@ -86,23 +95,50 @@
       </div>
       <div id="puzzle-container">
 
-        <article class="mail-card solved end-result">
+        <article class="mail-card unread" id="puzzle-4">
 
           <div class="mail-header">
             <div class="sender-area">
               <div class="sender-icon">?</div>
               <div class="sender-meta">
-                <div class="sender-name">相尾</div>
-                <div class="mail-address">aio.k@████.jp</div>
+                <div class="sender-name">潤田</div>
+                <div class="mail-address">uruta.k@████.jp</div>
               </div>
             </div>
-            <div class="mail-date">CASE CLOSED</div>
+            <div class="mail-date" id="final-date"></div>
           </div>
 
-          <div class="mail-subject">Re:Re:Re:Re:突然のご連絡失礼します。</div>
+          <div class="mail-subject">Re:Re:Re:Re:Re:Re:ご連絡ありがとうございます。</div>
 
           <div class="mail-body">
-            <p>頑張って捕まえるぞ！協力してくれてありがとう</p>
+            <p>夫婦は、<strong>息子が自分たちを騙した</strong>と主張し続けました。<br><br>
+
+              彼らの話では、息子はそれまで自分たちに従順で、言われるままに動いていた存在でした。<br>
+              そんな息子に裏切られ、通報されたというのです。<br><br>
+
+              しかし、その息子の存在を裏付けるものは何一つ見つかりませんでした。<br>
+              戸籍や出生記録を調べても彼らが語るような子供の存在は確認できず、証言は妄言として処理されることになりました。<br><br>
+
+              ですが、私はどうしてもそれが作り話だと思えないのです。<br>
+              もちろん相手は詐欺師ですから、証拠もないような証言をそのまま信じることはできません。<br>
+              それでも、あの時の様子を思い返すと存在しない子供の話をしていたとは思えないのです。<br><br>
+
+              そこでお聞きしたいことがあります。<br><br>
+
+              貴方は夫婦が語っていた<strong>子供は存在する</strong>と思いますか？<br><br>
+
+
+            </p>
+
+            <div class="answer-area">
+              <select class="answer-select" id="final-select">
+                <option value="">— 返信内容を選択してください —</option>
+                <option value="a">存在する</option>
+                <option value="b">存在しない</option>
+              </select>
+              <button onclick="submitFinalDecision()">送信する</button>
+              <div id="msg-final" class="mail-message"></div>
+            </div>
           </div>
 
         </article>
@@ -112,5 +148,6 @@
 
   </div>
 
+  <script src="../js/main.js"></script>
 </body>
 </html>
